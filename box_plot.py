@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 class BoxPlot:
-    """Generates a box plot with quartile, outlier, and spread info."""
+    # Generates a box plot with quartile, outlier, and spread info.
 
     def __init__(self, data, label="Grades"):
         # Store the data and label
@@ -13,7 +13,7 @@ class BoxPlot:
         self._compute_stats()
 
     def _compute_stats(self):
-        """Calculate quartiles, IQR, bounds, and outliers."""
+        # Calculate quartiles, IQR, bounds, and outliers.
         self.q1 = np.percentile(self.data, 25)
         self.median = np.percentile(self.data, 50)
         self.q3 = np.percentile(self.data, 75)
@@ -27,7 +27,7 @@ class BoxPlot:
         ]
 
     def print_summary(self):
-        """Print quartile and spread info to the console."""
+        # Print quartile and spread info to the console.
         print(f"Q1 (25th)     : {self.q1:.2f}")
         print(f"Median (50th) : {self.median:.2f}")
         print(f"Q3 (75th)     : {self.q3:.2f}")
@@ -37,7 +37,7 @@ class BoxPlot:
         print(f"Outliers      : {self.outliers if len(self.outliers) > 0 else 'None'}")
 
     def plot(self):
-        """Render the box plot with quartile annotations."""
+        # Render the box plot with quartile annotations.
         fig, ax = plt.subplots(figsize=(6, 7))
 
         # Draw the box plot
@@ -67,9 +67,9 @@ class BoxPlot:
         plt.show()
 
 
-# --- Run when executed directly ---
+#  Note: this part ay para sa testing lang, pwede iwanan o burahin basta d mag conflict sa main function
 if __name__ == "__main__":
-    # Generate synthetic student grades (same seed as group)
+    # Generate synthetic student grades 
     np.random.seed(42)
     grades = np.random.normal(loc=75, scale=12, size=100).clip(0, 100)
 
