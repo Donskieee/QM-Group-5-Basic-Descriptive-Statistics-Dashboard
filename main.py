@@ -23,10 +23,17 @@ grades = np.random.normal(loc=75, scale=12, size=100).clip(0, 100)
 
 
 def compute_stats(data):
+    # Calculate mode safely
+    mode_result = stats.mode(data, keepdims=True)
+    mode_val = mode_result.mode[0] if len(mode_result.mode) > 0 else np.nan
+
     return {
         "mean": np.mean(data),
         "median": np.median(data),
+        "mode": mode_val,
+        "variance": np.var(data),
         "std": np.std(data),
+        "range": np.max(data) - np.min(data),
         "min": np.min(data),
         "max": np.max(data),
         "q1": np.percentile(data, 25),
@@ -90,11 +97,14 @@ def update_dashboard(new_grades):
     stats_data = [
         ("Count", stats_values["count"]),
         ("Mean", round(stats_values["mean"], 2)),
+        ("50% (Median)", round(stats_values["median"], 2)),
+        ("Mode", round(stats_values["mode"], 2)),
+        ("Variance", round(stats_values["variance"], 2)),
         ("Std", round(stats_values["std"], 2)),
+        ("Range", round(stats_values["range"], 2)),
         ("Min", round(stats_values["min"], 2)),
-        ("25%", round(stats_values["q1"], 2)),
-        ("50%", round(stats_values["q2"], 2)),
-        ("75%", round(stats_values["q3"], 2)),
+        ("25% (Q1)", round(stats_values["q1"], 2)),
+        ("75% (Q3)", round(stats_values["q3"], 2)),
         ("Max", round(stats_values["max"], 2)),
         ("Skewness", round(stats_values["skew"], 4)),
         ("Kurtosis", round(stats_values["kurt"], 4)),
@@ -103,6 +113,19 @@ def update_dashboard(new_grades):
     for i, item in enumerate(stats_data):
         tag = 'evenrow' if i % 2 == 0 else 'oddrow'
         tree.insert("", tk.END, values=item, tags=(tag,))
+        
+    # Update interpretation text
+    skew_text = "fairly symmetrical"
+    if stats_values["skew"] > 0.5:
+        skew_text = "positively skewed (right-leaning)"
+    elif stats_values["skew"] < -0.5:
+        skew_text = "negatively skewed (left-leaning)"
+
+    interp = (f"Interpretation:\n"
+              f"• Center: The grades cluster around a mean of {stats_values['mean']:.1f} and a median of {stats_values['median']:.1f}.\n"
+              f"• Spread: Grades span a range of {stats_values['range']:.1f} points with a standard deviation of {stats_values['std']:.1f}, indicating {'high' if stats_values['std'] > 10 else 'low'} variability.\n"
+              f"• Skew: With a skewness of {stats_values['skew']:.2f}, the distribution is {skew_text}.")
+    lbl_interpretation.configure(text=interp)
 
 
 def load_csv():
@@ -174,7 +197,8 @@ btn_csv = ctk.CTkButton(button_frame, text="Load CSV File", command=load_csv, fo
 btn_csv.pack(side="left", padx=(0, 10))
 
 def generate_random_data():
-    new_grades = np.random.normal(loc=75, scale=12, size=100).clip(0, 100)
+    random_student_count = np.random.randint(40, 160)  # Random amount between 40 and 160 students
+    new_grades = np.random.normal(loc=75, scale=12, size=random_student_count).clip(0, 100)
     update_dashboard(new_grades)
 
 btn_random = ctk.CTkButton(button_frame, text="Generate Random Data", command=generate_random_data, font=("Arial", 16, "bold"))
@@ -236,6 +260,12 @@ tree.tag_configure('oddrow', background='white')
 tree.heading("Statistic", text="Statistic")
 tree.heading("Value", text="Value")
 tree.pack(fill="both", expand=True)
+
+# -----------------------------
+# INTERPRETATION BOX
+# -----------------------------
+lbl_interpretation = ctk.CTkLabel(right_frame, text="", font=("Arial", 14), justify="left", wraplength=450, anchor="w")
+lbl_interpretation.pack(fill="x", pady=10, padx=10)
 
 update_dashboard(grades)
 
