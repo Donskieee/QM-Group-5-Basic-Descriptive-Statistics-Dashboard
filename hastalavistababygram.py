@@ -12,18 +12,19 @@ median_grade = np.median(grades)
 
 # Histogram with Mean and Median lines
 # Don't forget to change "axes" to "axes[0]" once assembling it
-axes.hist(grades, bins=20, color="steelblue", edgecolor="white", alpha=0.7)
+axes.hist(grades, bins=range(40, 101, 5), color="steelblue", edgecolor="white", alpha=0.7)
 axes.axvline(mean_grade, color="red", linestyle="--", linewidth=2,
                 label=f"Mean = {mean_grade:.1f}")
 axes.axvline(median_grade, color="green", linestyle=":", linewidth=2,
                 label=f"Median = {median_grade:.1f}")
 
 # Labels and design
-axes.set_xlabel("Grade (0-100)", fontsize=11)
+axes.set_xlabel("Grade", fontsize=11)
 axes.set_ylabel("Number of Students (Frequency)", fontsize=11)
-axes.set_title("Grade Distribution with Mean, Median, & Mode", fontsize=12, fontweight='bold')
+axes.set_title("Grade Distribution with Mean, & Median", fontsize=12, fontweight='bold')
 axes.legend(loc="upper right", fontsize=10)
 axes.grid(True, alpha=0.3, linestyle='--')
+axes.set_xlim(40, 100)
 
 # Text annotation explaining the lines
 axes.text(0.02, 0.95, f"Total Students: {len(grades)}",
