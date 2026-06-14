@@ -45,21 +45,31 @@ def update_dashboard(new_grades):
     ax1.clear()
     ax2.clear()
 
-    ax1.hist(grades, bins=20, color="steelblue", edgecolor="white", alpha=0.7)
-    ax1.axvline(stats_values["mean"], color="red", linestyle="--", linewidth=2)
-    ax1.axvline(stats_values["median"], color="green", linestyle=":")
-    ax1.set_title("Grade Distribution (Histogram)")
-    ax1.set_ylabel("Frequency")
-    ax1.grid(alpha=0.3)
+    ax1.hist(grades, bins=range(40, 101, 5), color="steelblue", edgecolor="white", alpha=0.7)
+    ax1.axvline(stats_values["mean"], color="red", linestyle="--", linewidth=2, label=f'Mean = {stats_values["mean"]:.1f}')
+    ax1.axvline(stats_values["median"], color="green", linestyle=":", linewidth=2, label=f'Median = {stats_values["median"]:.1f}')
+    ax1.set_xlabel("Grade", fontsize=11)
+    ax1.set_ylabel("Number of Students (Frequency)", fontsize=11)
+    ax1.set_title("Grade Distribution with Mean, & Median", fontsize=12, fontweight='bold')
+    ax1.legend(loc="upper right", fontsize=10)
+    ax1.grid(True, alpha=0.3, linestyle='--')
+    ax1.set_xlim(40, 100)
+    ax1.text(0.02, 0.95, f"Total Students: {len(grades)}", transform=ax1.transAxes, fontsize=9, verticalalignment='top')
 
     ax2.boxplot(
         grades,
         vert=False,
         patch_artist=True,
+        showmeans=True,
+        meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black'),
         boxprops=dict(facecolor="steelblue", alpha=0.5),
         medianprops=dict(color="red", linewidth=2)
     )
     ax2.set_title("Box Plot of Grades")
+    ax2.set_yticks([])  # Remove the "1" on the y-axis
+    ax2.plot([], [], color='red', linewidth=2, label='Median')
+    ax2.plot([], [], marker='x', color='black', linestyle='None', label='Mean')
+    ax2.legend(loc='upper right')
 
     canvas.draw()
 
@@ -119,17 +129,12 @@ root.title("Grade Statistics Dashboard")
 root.geometry("1200x700")
 
 # -----------------------------
-# TITLE
+# (Title moved to right frame)
 # -----------------------------
-title = tk.Label(root, text="Grade Statistics Dashboard",
-                 font=("Arial", 16, "bold"))
-title.pack(pady=10)
 
 # -----------------------------
-# BUTTON
+# (Buttons moved to the left frame below)
 # -----------------------------
-btn = tk.Button(root, text="Load CSV File", command=load_csv)
-btn.pack(pady=5)
 
 # -----------------------------
 # MAIN GRID LAYOUT (FIXED)
@@ -148,6 +153,22 @@ right_frame = tk.Frame(main_frame)
 right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
 # -----------------------------
+# BUTTONS (LEFT SIDE)
+# -----------------------------
+button_frame = tk.Frame(left_frame)
+button_frame.pack(fill="x", pady=(0, 10))
+
+btn_csv = tk.Button(button_frame, text="Load CSV File", command=load_csv, width=15, font=("Arial", 11, "bold"))
+btn_csv.pack(side="left", padx=(0, 10))
+
+def generate_random_data():
+    new_grades = np.random.normal(loc=75, scale=12, size=100).clip(0, 100)
+    update_dashboard(new_grades)
+
+btn_random = tk.Button(button_frame, text="Generate Random Data", command=generate_random_data, width=20, font=("Arial", 11, "bold"))
+btn_random.pack(side="left")
+
+# -----------------------------
 # PLOTS
 # -----------------------------
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 7))
@@ -155,27 +176,47 @@ fig.subplots_adjust(hspace=0.4)
 
 stats_values = compute_stats(grades)
 
-ax1.hist(grades, bins=20, color="steelblue", edgecolor="white", alpha=0.7)
-ax1.axvline(stats_values["mean"], color="red", linestyle="--")
-ax1.axvline(stats_values["median"], color="green", linestyle=":")
-ax1.set_title("Grade Distribution (Histogram)")
-ax1.grid(alpha=0.3)
+ax1.hist(grades, bins=range(40, 101, 5), color="steelblue", edgecolor="white", alpha=0.7)
+ax1.axvline(stats_values["mean"], color="red", linestyle="--", linewidth=2, label=f'Mean = {stats_values["mean"]:.1f}')
+ax1.axvline(stats_values["median"], color="green", linestyle=":", linewidth=2, label=f'Median = {stats_values["median"]:.1f}')
+ax1.set_xlabel("Grade", fontsize=11)
+ax1.set_ylabel("Number of Students (Frequency)", fontsize=11)
+ax1.set_title("Grade Distribution with Mean, & Median", fontsize=12, fontweight='bold')
+ax1.legend(loc="upper right", fontsize=10)
+ax1.grid(True, alpha=0.3, linestyle='--')
+ax1.set_xlim(40, 100)
+ax1.text(0.02, 0.95, f"Total Students: {len(grades)}", transform=ax1.transAxes, fontsize=9, verticalalignment='top')
 
 ax2.boxplot(
     grades,
     vert=False,
     patch_artist=True,
+    showmeans=True,
+    meanprops=dict(marker='x', markeredgecolor='black', markerfacecolor='black'),
     boxprops=dict(facecolor="steelblue", alpha=0.5),
     medianprops=dict(color="red", linewidth=2)
 )
+ax2.set_yticks([])  # Remove the "1" on the y-axis
+ax2.plot([], [], color='red', linewidth=2, label='Median')
+ax2.plot([], [], marker='x', color='black', linestyle='None', label='Mean')
+ax2.legend(loc='upper right')
 
 canvas = FigureCanvasTkAgg(fig, master=left_frame)
 canvas.draw()
 canvas.get_tk_widget().pack(fill="both", expand=True)
 
 # -----------------------------
-# TABLE
+# TITLE & TABLE
 # -----------------------------
+title = tk.Label(right_frame, text="Grade Statistics Dashboard",
+                 font=("Arial", 20, "bold"))
+title.pack(pady=(0, 15))
+
+# Increase font size for the table
+style = ttk.Style()
+style.configure("Treeview.Heading", font=("Arial", 13, "bold"))
+style.configure("Treeview", font=("Arial", 15), rowheight=30)
+
 columns = ("Statistic", "Value")
 tree = ttk.Treeview(right_frame, columns=columns, show="headings", height=15)
 
