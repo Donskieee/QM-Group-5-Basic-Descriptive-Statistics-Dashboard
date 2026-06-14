@@ -49,7 +49,6 @@ def update_dashboard(new_grades):
     ax1.axvline(stats_values["mean"], color="red", linestyle="--", linewidth=2)
     ax1.axvline(stats_values["median"], color="green", linestyle=":")
     ax1.set_title("Grade Distribution (Histogram)")
-    ax1.set_xlabel("Grades")
     ax1.set_ylabel("Frequency")
     ax1.grid(alpha=0.3)
 
@@ -152,6 +151,7 @@ right_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 # PLOTS
 # -----------------------------
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 7))
+fig.subplots_adjust(hspace=0.4)
 
 stats_values = compute_stats(grades)
 
