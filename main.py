@@ -124,9 +124,9 @@ def update_dashboard(new_grades):
     # Update interpretation text
     skew_text = "fairly symmetrical"
     if stats_values["skew"] > 0.5:
-        skew_text = "positively skewed (right-leaning)"
+        skew_text = "positively skewed (right-tailed)"
     elif stats_values["skew"] < -0.5:
-        skew_text = "negatively skewed (left-leaning)"
+        skew_text = "negatively skewed (left-tailed)"
 
     interp = (f"Interpretation:\n"
               f"• Center: The grades cluster around a mean of {stats_values['mean']:.1f} and a median of {stats_values['median']:.1f}.\n"
