@@ -200,11 +200,27 @@ btn_csv.pack(side="left", padx=(0, 10))
 
 def generate_random_data():
     random_student_count = np.random.randint(40, 160)  # Random amount between 40 and 160 students
-    new_grades = np.random.normal(loc=75, scale=12, size=random_student_count).clip(0, 100)
+    raw_grades = np.random.normal(loc=75, scale=12, size=random_student_count).clip(0, 100)
+    
+    df = pd.DataFrame({"Grade": raw_grades})
+    new_grades = df["Grade"].values
+    
     update_dashboard(new_grades)
 
 btn_random = ctk.CTkButton(button_frame, text="Generate Random Data", command=generate_random_data, font=("Arial", 16, "bold"))
 btn_random.pack(side="left")
+
+def export_report():
+    file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG Image", "*.png")])
+    if file_path:
+        try:
+            fig.savefig(file_path, dpi=300, bbox_inches='tight')
+            messagebox.showinfo("Success", "Report exported successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to export image:\n{str(e)}")
+
+btn_export = ctk.CTkButton(button_frame, text="Export Report", command=export_report, font=("Arial", 16, "bold"), fg_color="#27ae60", hover_color="#2ecc71")
+btn_export.pack(side="left", padx=(10, 0))
 
 # -----------------------------
 # PLOTS
