@@ -51,13 +51,18 @@ def update_dashboard(new_grades):
     grades = new_grades
     stats_values = compute_stats(grades)
 
+    # Calculate max grade (rounded up to nearest 10, minimum 100)
+    max_raw = np.max(grades) if len(grades) > 0 else 100
+    max_val = max(100, int(np.ceil(max_raw / 10.0)) * 10)
+    bin_edges = range(0, max_val + 1, 10)
+
     # -----------------------------
     # UPDATE PLOTS
     # -----------------------------
     ax1.clear()
     ax2.clear()
 
-    ax1.hist(grades, bins=range(0, 101, 10), color="steelblue", edgecolor="white", alpha=0.7)
+    ax1.hist(grades, bins=bin_edges, color="steelblue", edgecolor="white", alpha=0.7)
     ax1.axvline(stats_values["mean"], color="red", linestyle="--", linewidth=2, label=f'Mean = {stats_values["mean"]:.1f}')
     ax1.axvline(stats_values["median"], color="green", linestyle=":", linewidth=2, label=f'Median = {stats_values["median"]:.1f}')
     ax1.set_xlabel("Grade", fontsize=16)
@@ -65,8 +70,8 @@ def update_dashboard(new_grades):
     ax1.set_title("Grade Distribution with Mean, & Median", fontsize=18, fontweight='bold')
     ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=15)
     ax1.grid(True, alpha=0.3, linestyle='--')
-    ax1.set_xlim(0, 100)
-    ax1.set_xticks(range(0, 101, 10))
+    ax1.set_xlim(0, max_val)
+    ax1.set_xticks(bin_edges)
     ax1.text(0.02, 0.95, f"Total Students: {len(grades)}", transform=ax1.transAxes, fontsize=14, verticalalignment='top')
 
     ax2.boxplot(
@@ -81,8 +86,8 @@ def update_dashboard(new_grades):
     ax2.set_title("Box Plot of Grades", fontsize=18, fontweight='bold')
     ax2.set_xlabel("Grade", fontsize=16)
     ax2.grid(True, alpha=0.3, linestyle='--')
-    ax2.set_xlim(0, 100)
-    ax2.set_xticks(range(0, 101, 10))
+    ax2.set_xlim(0, max_val)
+    ax2.set_xticks(bin_edges)
     ax2.set_yticks([])  
     ax2.plot([], [], color='red', linewidth=2, label='Median')
     ax2.plot([], [], marker='x', color='black', linestyle='None', label='Mean')
