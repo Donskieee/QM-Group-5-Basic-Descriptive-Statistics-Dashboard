@@ -70,7 +70,7 @@ def update_dashboard(new_grades):
     ax1.set_title("Grade Distribution with Mean, & Median", fontsize=18, fontweight='bold')
     ax1.legend(loc='center left', bbox_to_anchor=(1, 0.5), fontsize=15)
     ax1.grid(True, alpha=0.3, linestyle='--')
-    ax1.set_xlim(0, max_val)
+    ax1.set_xlim(-2, max_val + 2)
     ax1.set_xticks(bin_edges)
     ax1.text(0.02, 0.95, f"Total Students: {len(grades)}", transform=ax1.transAxes, fontsize=14, verticalalignment='top')
 
@@ -86,7 +86,7 @@ def update_dashboard(new_grades):
     ax2.set_title("Box Plot of Grades", fontsize=18, fontweight='bold')
     ax2.set_xlabel("Grade", fontsize=16)
     ax2.grid(True, alpha=0.3, linestyle='--')
-    ax2.set_xlim(0, max_val)
+    ax2.set_xlim(-2, max_val + 2)
     ax2.set_xticks(bin_edges)
     ax2.set_yticks([])  
     ax2.plot([], [], color='red', linewidth=2, label='Median')
